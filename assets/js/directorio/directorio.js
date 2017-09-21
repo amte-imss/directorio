@@ -154,7 +154,6 @@ function grid_directorios(tipo_nivel) {
         paging: true,
         autoload: true,
         rowClick: null,
-        pageLoading: true,
         pageSize: 5,
         pageButtonCount: 3,
         pagerFormat: "Paginas: {pageIndex} de {pageCount}    {first} {prev} {pages} {next} {last}   Total: {itemCount}",
@@ -183,11 +182,12 @@ function grid_directorios(tipo_nivel) {
                     dataType: "json"
                 })
                         .done(function (result) {
-                            d.resolve({
-                                data: result['data'],
+/*                            d.resolve({
+                                data: result['data']
                                 itemsCount: result['length']
 
-                            });
+                            });*/
+                            d.resolve(result['data']);
                         });
 
                 return d.promise();
