@@ -271,15 +271,7 @@ function grid_directorios(tipo_nivel) {
                 cancelEditButtonTooltip: "Cancelar", // tooltip of cancel editing button
             }
         ]
-    }).data("JSGrid");
-
-    var origFinishInsert = jsGrid.loadStrategies.DirectLoadingStrategy.prototype.finishInsert;
-    jsGrid.loadStrategies.DirectLoadingStrategy.prototype.finishInsert = function (insertedItem) {
-        if (!this._grid.insertSuccess) { // define insertFailed on done of delete ajax request in insertFailed of controller            
-            return;
-        }
-        origFinishInsert.apply(this, arguments);
-    }
+    });
 }
 
 function ditto_column_event() {
