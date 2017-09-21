@@ -26,8 +26,8 @@ class LNiveles_acceso {
     public function nivel_acceso_valido($niveles_requeridos, $niveles_disponibles = []) {
         $status = false;
         foreach ($niveles_disponibles as $nivel) {
-            if (is_array($nivel) && isset($nivel['id_rol'])) {
-                $nivel = $nivel['id_rol'];
+            if (is_array($nivel) && isset($nivel['id_grupo'])) {
+                $nivel = $nivel['id_grupo'];
             }
             if (in_array($nivel, $niveles_requeridos)) {
                 $status = true;

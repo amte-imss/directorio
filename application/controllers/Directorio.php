@@ -31,68 +31,76 @@ class Directorio extends MY_Controller {
     public function index() {
 
         $datos_sesion = $this->get_datos_sesion();
-        pr($datos_sesion);
-//        if ($datos_sesion) {//Valida que exista sesión
-//            $id_usuario = $datos_sesion[En_datos_sesion::ID_USUARIO];
-//            $clave_unidad = $this->get_datos_sesion(En_datos_sesion::CLAVE_UNIDAD);
-//            //***** Valida tipo de usuario
-//            $this->load->library('LNiveles_acceso');
-//            $this->load->model('Modulo_model', 'modulo');
-//            $niveles = $this->modulo->get_niveles_acceso($id_usuario, 'usuario');
-//            $filtros = ['id_unidad_instituto' => $datos_sesion[En_datos_sesion::ID_UNIDAD_INSTITUTO]];
-//            if ($this->lniveles_acceso->nivel_acceso_valido(array(LNiveles_acceso::Admin), $niveles)) {//Valida un nivel central o administrador
-//                
-//            } else {//Nivel 2
-//            }
-        //***** Fin de validación de tipo de usuario
-        //Cargar información de directorios
+        if ($datos_sesion) {//Valida que exista sesión
+            $id_usuario = $datos_sesion[En_datos_sesion::ID_USUARIO];
+            pr($datos_sesion);
+            //***** Valida tipo de usuario
+            $this->load->library('LNiveles_acceso');
+            $this->load->model('Modulo_model', 'modulo');
+            $niveles = $this->modulo->get_niveles_acceso($id_usuario, 'usuario');
+            $result['mostrar_filtros'] = FALSE;
+            if ($this->lniveles_acceso->nivel_acceso_valido(array(LNiveles_acceso::Admin), $niveles)) {//Valida un nivel central o administrador
+//            pr($niveles);
+                $result['mostrar_filtros'] = TRUE; //Mostrar filtros de unidad
+            }
+
+            //***** Fin de validación de tipo de usuario
+            //Cargar información de directorios
 //        $this->load->model('Directorio_model', 'dir');
 //        $result['info_directorios'] = $this->dir->get_datos_directorio();
 //        pr($result);
-        $result['mostrar_filtros'] = FALSE;
-        $main_content = $this->load->view('directorio/directorio.tpl.php', $result, true);
-        $this->template->setMainContent($main_content);
-        $this->template->getTemplate();
-//        }
+            $main_content = $this->load->view('directorio/directorio.tpl.php', $result, true);
+            $this->template->setMainContent($main_content);
+            $this->template->getTemplate();
+        }
     }
 
     public function get_registros_directorio($tipo_nivel = '') {
 
         $datos_sesion = $this->get_datos_sesion();
-//        if ($datos_sesion) {//Valida que exista sesión
-//            $id_usuario = $datos_sesion[En_datos_sesion::ID_USUARIO];
+        if ($datos_sesion) {//Valida que exista sesión
+            $id_usuario = $datos_sesion[En_datos_sesion::ID_USUARIO];
 //            $clave_unidad = $this->get_datos_sesion(En_datos_sesion::CLAVE_UNIDAD);
-        //***** Valida tipo de usuario
-//            $this->load->library('LNiveles_acceso');
-//            $this->load->model('Modulo_model', 'modulo');
-//            $niveles = $this->modulo->get_niveles_acceso($id_usuario, 'usuario');
-//            $filtros = ['id_unidad_instituto' => $datos_sesion[En_datos_sesion::ID_UNIDAD_INSTITUTO]];
-//            if ($this->lniveles_acceso->nivel_acceso_valido(array(LNiveles_acceso::Admin), $niveles)) {//Valida un nivel central o administrador
-//            } else {//Nivel 2
-//                //Valida tipo unidad en la sesión, si es un UMAE o un delegacionl
-//                $filtros['U.grupo_tipo_unidad'] = 'UMAE'; //Para el caso de tipo de unidad qie es umae, para delegacional, trae todas las unidades de su delegación
-//            }
-        //***** Fin de validación de tipo de usuario
-        switch ($tipo_nivel) {
-            case 1:
-                $filtros['U.grupo_tipo_unidad!='] = 'UMAE'; //Para el caso de tipo de unidad qie es umae, para delegacional, trae todas las unidades de su delegación
-                break;
-            case 2:
-                $filtros['U.grupo_tipo_unidad'] = 'UMAE'; //Para el caso de tipo de unidad qie es umae, para delegacional, trae todas las unidades de su delegación
-                break;
-            default :
-                $filtros = null;
+            //***** Valida tipo de usuario
+            $this->load->library('LNiveles_acceso');
+            $this->load->model('Modulo_model', 'modulo');
+            $niveles = $this->modulo->get_niveles_acceso($id_usuario, 'usuario');
+            if ($this->lniveles_acceso->nivel_acceso_valido(array(LNiveles_acceso::Admin), $niveles)) {//Valida un nivel central o administrador
+                switch ($tipo_nivel) {
+                    case 1:
+                        $filtros['u.grupo_tipo_unidad!='] = 'UMAE'; //Para el caso de tipo de unidad qie es umae, para delegacional, trae todas las unidades de su delegación
+                        $filtros['u.umae'] = FALSE; //No debe existir una umae  
+                        break;
+                    case 2:
+                        $filtros['u.grupo_tipo_unidad'] = 'UMAE'; //Para el caso de tipo de unidad qie es umae, para delegacional, trae todas las unidades de su delegación
+                        $filtros['u.umae'] = TRUE; //No debe existir una umae  
+                        break;
+                    default :
+                        $filtros = null;
+                }
+            } else {//Nivel 2
+                //Valida tipo unidad en la sesión, si es un UMAE o un delegacionl
+                if ($datos_sesion[En_datos_sesion::IS_UMAE]) {//Valida si es una UMAE 
+                    $filtros['u.grupo_tipo_unidad'] = 'UMAE'; //Para el caso de tipo de unidad qie es umae, para delegacional, trae todas las unidades de su delegación
+                    $filtros['u.umae'] = TRUE; //No debe existir una umae  
+                    $filtros['u.clave_unidad'] = $datos_sesion[En_datos_sesion::CLAVE_UNIDAD]; //No debe existir una umae  
+                } else {//Is delegacional
+                    $filtros['z.id_delegacion'] = $datos_sesion[En_datos_sesion::ID_DELEGACION]; //Para el caso de tipo de unidad qie es umae, para delegacional, trae todas las unidades de su delegación
+                    $filtros['u.umae'] = FALSE; //No debe existir una umae  
+                }
+            }
+//            pr($filtros);
+//            exit();
+            //***** Fin de validación de tipo de usuario
+            $select = ["d.id_directorio", "d.clave_nombramiento", "d.matricula", "d.nombre",
+                "d.apellido_p", "d.apellido_m", "d.titulo", "d.telefonos", "d.observaciones", "u.clave_unidad",
+                "u.nombre AS nombre_unidad", "z.clave_delegacional", "n.nombre nombre_nombramiento"];
+            $result['data'] = $this->dir->get_datos_directorio($filtros, $select);
+            $result['length'] = count($result['data']);
+            header('Content-Type: application/json; charset=utf-8;');
+            $json = json_encode($result);
+            echo $json;
         }
-        $filtros = null;
-        $select = ["d.id_directorio", "d.clave_nombramiento", "d.matricula", "d.nombre",
-            "d.apellido_p", "d.apellido_m", "d.titulo", "d.telefonos", "d.observaciones", "u.clave_unidad",
-            "u.nombre AS nombre_unidad", "z.clave_delegacional", "n.nombre nombre_nombramiento"];
-        $result['data'] = $this->dir->get_datos_directorio($filtros, $select);
-        $result['length'] = count($result['data']);
-        header('Content-Type: application/json; charset=utf-8;');
-        $json = json_encode($result);
-        echo $json;
-//        }
     }
 
     public function editar() {
@@ -132,28 +140,27 @@ class Directorio extends MY_Controller {
         echo $json;
     }
 
-    public function exportar_datos($nivel=null)
-    {
-        $columnas = array('Clave de nombramiento', 'Clave de unidad', 'Unidad', 'Nivel' ,'Matrícula', 'Nombre', 'Apellido paterno', 'Apellido materno','Teléfonos', 'Observaciones');
+    public function exportar_datos($nivel = null) {
+        $columnas = array('Clave de nombramiento', 'Clave de unidad', 'Unidad', 'Nivel', 'Matrícula', 'Nombre', 'Apellido paterno', 'Apellido materno', 'Teléfonos', 'Observaciones');
 
         $select = array(
-                "d.clave_nombramiento",
-                "u.clave_unidad",
-                "u.nombre AS nombre_unidad",
-                "u.umae",
-                "d.matricula",
-                "d.nombre",
-                "d.apellido_p",
-                "d.apellido_m",
-                "d.telefonos",
-                "d.observaciones"
+            "d.clave_nombramiento",
+            "u.clave_unidad",
+            "u.nombre AS nombre_unidad",
+            "u.umae",
+            "d.matricula",
+            "d.nombre",
+            "d.apellido_p",
+            "d.apellido_m",
+            "d.telefonos",
+            "d.observaciones"
         );
 
         $filtros = null;
 
         $resultado = $this->dir->get_datos_directorio($filtros, $select);
         $file_name = 'directorio_usuarios_' . date('Ymd_his', time());
-        $this->exportar_xls($columnas,$resultado,null,null,$file_name);
+        $this->exportar_xls($columnas, $resultado, null, null, $file_name);
     }
 
 }

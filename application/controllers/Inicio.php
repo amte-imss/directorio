@@ -52,7 +52,8 @@ class Inicio extends MY_Controller {
                             'where' => array('matricula' => $post['usuario']),
                             'select' => array(
                                 'usuarios.id_usuario', 'usuarios.matricula', 'usuarios.nombre',
-                                'UNI.id_unidad_instituto','UNI.clave_unidad clave_unidad'
+                                'UNI.id_unidad_instituto','UNI.clave_unidad clave_unidad', 'UNI.umae', 
+                                'UNI.id_delegacion'
                             )
                         );
                         $usuario = $this->usuario->get_usuarios($params)[0];

@@ -48,7 +48,7 @@ class Directorio_model extends MY_Model {
             foreach ($filtro as $k => $v)
                 $this->db->where($k, $v);
         }
-        $this->db->limit(30);
+//        $this->db->limit(30);
         $result = $this->db->get('ods.directorio d')->result_array();
         return $result;
     }
