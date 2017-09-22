@@ -62,20 +62,48 @@ class Modulo_model extends CI_Model
         $modulos = $this->db->get('sistema.modulos A')->result_array();
     }
 
-    public function get_niveles_acceso($id_modulo = 0)
+    public function get_niveles_acceso($id_aux = 0, $target = 'modulos')
+    {
+        $niveles = [];
+        if ($target == 'modulos')
+        {
+            $this->db->flush_cache();
+            $this->db->reset_query();
+            $select = array(
+                'A.id_rol id_grupo', 'nombre', 'B.activo'
+            );
+            $this->db->select($select);
+            $this->db->join('sistema.roles_modulos B', " A.id_rol = B.id_rol AND B.id_modulo = {$id_aux}", 'left');
+            $this->db->where('A.activo', true);
+            $this->db->order_by('A.orden');
+            $niveles = $this->db->get('sistema.roles A')->result_array();
+            $this->db->reset_query();
+            //pr($this->db->last_query());
+        }else{
+            $niveles = $this->get_niveles_acceso_usuario($id_aux);
+        }
+//        pr($this->db->last_query());
+        return $niveles;
+    }
+
+    private function get_niveles_acceso_usuario($id_usuario)
     {
         $this->db->flush_cache();
         $this->db->reset_query();
         $select = array(
-            'A.id_rol id_grupo', 'nombre', 'B.activo'
+            'A.id_rol', 'A.nombre', 'B.activo'
         );
         $this->db->select($select);
-        $this->db->join('sistema.roles_modulos B', " A.id_rol = B.id_rol AND B.id_modulo = {$id_modulo}", 'left');
-        $this->db->where('A.activo', true);                 
-        $this->db->order_by('A.orden');
-        $niveles = $this->db->get('sistema.roles A')->result_array();
+        $this->db->join('sistema.usuario_rol B', " B.id_rol = A.id_rol and B.id_usuario = {$id_usuario}", 'left');
+        $this->db->where('id_usuario', $id_usuario);
+        $query = $this->db->get('sistema.roles A');        
+        if ($query)
+        {
+            $niveles = $query->result_array();
+            $query->free_result(); //Libera la memoria 
+        }
+        $this->db->flush_cache();
         $this->db->reset_query();
-        //pr($this->db->last_query());
         return $niveles;
     }
     
