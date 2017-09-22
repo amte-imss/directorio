@@ -21,7 +21,7 @@ var dba;
 function grid_directorios(tipo_nivel) {
 
     var grid = $('#jsGridDirectorio').jsGrid({
-        height: "400px",
+        height: "600px",
         width: "100%",
         deleteConfirm: "¿Deseas eliminar este registro?",
         filtering: true,
