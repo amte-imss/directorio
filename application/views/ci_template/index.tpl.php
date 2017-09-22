@@ -29,6 +29,11 @@
         </script>
         <?php echo css('estilo_perfil.css'); ?>
         <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+        <style type="text/css">
+        footer.navbar{
+            margin-bottom: 0px;
+        }
+        </style>
         <?php echo css('font-awesome.css'); ?>
         <?php echo css('style.css'); ?>
         <?php echo css("date/datepicker.css"); ?>
@@ -200,8 +205,30 @@
         <!-- JQUERY SCRIPTS -->
         <!-- <script src="assets/js/jquery-2.js"></script> -->
 
-        <footer >
-            &copy; <a href="#" target="_blank">SIPIMSS 2017</a>
+        <footer class="navbar">
+            <div class="col-md-1"></div>       
+            <div class="col-md-5">
+                <br>
+                <br>
+                &copy; <a href="#" target="_blank">SIPIMSS 2017</a>
+                <br>
+                Este sitio se visualiza correctamente apartir Mozila Firefox 50 y Google Chrome 55.
+            </div>
+            <div class="col-md-2"></div>
+            <div class="col-md-4">
+                <b>Mesa de ayuda</b>
+                <br>
+                ¿Tienes alguna duda? Comunícate con nosotros:
+                <br>
+                <b>Teléfono:</b> 56 27 69 00 Ext. 21146, 21147 y 21148
+                <br>
+                <b>RED:</b> 865021146, 865021147, 865021148
+                <br>
+                <b>Email:</b> soporte.innovaedu@imss.gob.mx
+                <br>
+                <b>Horario:</b> de lunes a viernes, de 8h a 17h            
+            </div>
+            <div class="col-md-4"></div>
         </footer>
 
         <!-- BOOTSTRAP SCRIPTS -->
@@ -210,7 +237,6 @@
         <!-- METISMENU SCRIPTS -->
         <?php echo js("jquery.metisMenu.js"); ?>
         <!-- <?php //echo js("jquery-2.js");    ?> -->
-
 
         <!-- CUSTOM SCRIPTS -->
         <?php echo js("/custom.js"); ?>
@@ -229,7 +255,5 @@
             // for every slide in carousel, copy the next slide's item in the slide.
             // Do the same for the next, next item
         </script>
-
-
     </body>
 </html>
