@@ -59,7 +59,7 @@ class Inicio extends MY_Controller {
                         $usuario = $this->usuario->get_usuarios($params)[0];
                         $this->session->set_userdata('usuario', $usuario);
 //                        pr($usuario);
-                        redirect(site_url() . '/dashboard');
+                        redirect(site_url('directorio'));
                         break;
                     case 2:
                         $this->session->set_flashdata('flash_password', $mensajes[$valido]);
@@ -78,7 +78,7 @@ class Inicio extends MY_Controller {
 
         $usuario = $this->session->userdata('usuario');
         if (isset($usuario['id_usuario'])) {
-            redirect(site_url() . '/dashboard');
+	        redirect(site_url('directorio'));
         } else {
             //cargamos plantilla
 //            pr(validation_errors());
@@ -87,7 +87,7 @@ class Inicio extends MY_Controller {
     }
 
     public function dashboard() {
-        echo 'En construcción';
+        redirect(site_url('directorio'));
     }
 
     public function captcha() {
