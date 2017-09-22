@@ -26,6 +26,7 @@ class Directorio extends MY_Controller {
         $this->load->library('form_complete');
         $this->load->library('form_validation');
         $this->load->model('Directorio_model', 'dir');
+         $this->load->model('Modulo_model', 'modulo');
     }
 
     public function index() {
@@ -33,10 +34,9 @@ class Directorio extends MY_Controller {
         $datos_sesion = $this->get_datos_sesion();
         if ($datos_sesion) {//Valida que exista sesión
             $id_usuario = $datos_sesion[En_datos_sesion::ID_USUARIO];
-            pr($datos_sesion);
+//            pr($datos_sesion);
             //***** Valida tipo de usuario
             $this->load->library('LNiveles_acceso');
-            $this->load->model('Modulo_model', 'modulo');
             $niveles = $this->modulo->get_niveles_acceso($id_usuario, 'usuario');
             $result['mostrar_filtros'] = FALSE;
             if ($this->lniveles_acceso->nivel_acceso_valido(array(LNiveles_acceso::Admin), $niveles)) {//Valida un nivel central o administrador
@@ -55,17 +55,19 @@ class Directorio extends MY_Controller {
         }
     }
 
-    public function get_registros_directorio($tipo_nivel = '') {
-
+    public function get_registros_directorio($tipo_nivel = '', $delegacion = null) {
         $datos_sesion = $this->get_datos_sesion();
         if ($datos_sesion) {//Valida que exista sesión
             $id_usuario = $datos_sesion[En_datos_sesion::ID_USUARIO];
 //            $clave_unidad = $this->get_datos_sesion(En_datos_sesion::CLAVE_UNIDAD);
             //***** Valida tipo de usuario
             $this->load->library('LNiveles_acceso');
-            $this->load->model('Modulo_model', 'modulo');
+           
             $niveles = $this->modulo->get_niveles_acceso($id_usuario, 'usuario');
-            if ($this->lniveles_acceso->nivel_acceso_valido(array(LNiveles_acceso::Admin), $niveles)) {//Valida un nivel central o administrador
+            $valida_nivel_acceso = $this->lniveles_acceso->nivel_acceso_valido(array(LNiveles_acceso::Admin), $niveles);
+//            pr($niveles);
+//            pr($valida_nivel_acceso);
+            if ($valida_nivel_acceso) {//Valida un nivel central o administrador
                 switch ($tipo_nivel) {
                     case 1:
                         $filtros['u.grupo_tipo_unidad!='] = 'UMAE'; //Para el caso de tipo de unidad qie es umae, para delegacional, trae todas las unidades de su delegación
@@ -101,6 +103,10 @@ class Directorio extends MY_Controller {
             $json = json_encode($result);
             echo $json;
         }
+    }
+    
+    public function get_delegaciones(){
+        
     }
 
     public function editar() {

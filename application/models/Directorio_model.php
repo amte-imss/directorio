@@ -50,6 +50,8 @@ class Directorio_model extends MY_Model {
         }
 //        $this->db->limit(30);
         $result = $this->db->get('ods.directorio d')->result_array();
+//        pr($this->db->last_query());
+//        exit();
         return $result;
     }
 

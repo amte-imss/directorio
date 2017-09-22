@@ -1,3 +1,4 @@
+var is_carga = true;
 $(document).ready(function () {
 //	mostrar_loader();
     $('#exportar_datos').on('click', function () {
@@ -6,141 +7,18 @@ $(document).ready(function () {
     if (document.getElementById("nivel_reporte")) {
         $('#nivel_reporte').on('change', function () {
             console.log(this.value)
+            is_carga = true;
             grid_directorios(this.value);
         });
         $("#nivel_reporte").trigger('change');
     } else {
+        is_carga = true;
         grid_directorios("");
     }
-
-
-
-//	$('.ditto-column').change(ditto_column_event);
-
-//	$.ajax({
-//		url: site_url + '/directorio/get_registros_directorio',
-//		type: "POST",
-//		dataType: "json"
-//	})
-//	.done(function (data) {
-//		lista_tipo_actividad = data['tipos_actividad'];
-//		lista_modalidad = data['modalidades'];
-//		lista_area_enfoque = data['areas_enfoque'];
-//		lista_delegacion = data['delegaciones'];
-//		delegaciones();
-//
-//		$('#tipo_actividad').append('<option value="">Selecciona una opción</option>');
-//		$.each(lista_tipo_actividad, function (key, value) {
-//			$('#tipo_actividad').append('<option value="' + value['id_tipo_actividad'] + '">' + value['nombre_tipo_actividad'] + '</option>');
-//		});
-//
-//		ocultar_loader();
-//
-//		$('#tipo_actividad').on('change', function(event){
-//			event.preventDefault();
-//			event.stopImmediatePropagation();
-//			var tipo = $(this).val();
-//			mostrar_loader();
-//			$('#jsGrid').empty();
-//
-//			if(tipo){
-//				select_modalidad(tipo);
-//				$('#modalidad').attr('disabled', false);
-//			}else{
-//				$('#modalidad').attr('disabled', true);
-//				$('#modalidad').empty();
-//				$('#modalidad').append('<option value="">Selecciona una opción</option>');
-//			}
-//			$('#area_enfoque').attr('disabled', true);
-//			$('#area_enfoque').empty();
-//			$('#area_enfoque').append('<option value="">Selecciona una opción</option>');
-//
-//			ocultar_loader();
-//
-//		});
-//
-//	})
-//	.fail(function (jqXHR, error, errorThrown) {
-//		console.log("error carga rama");
-//		console.log(jqXHR);
-//		console.log(error);
-//		console.log(errorThrown);
-//	});
 });
-//
-//function select_modalidad(tipo) {
-//	modalidad(tipo);
-//	$('#modalidad').empty();
-//
-//	$('#modalidad').append('<option value="">Selecciona una opción</option>');
-//	$.each(opciones_modalidad, function (key, value) {
-//		$('#modalidad').append('<option value="' + value['id_modalidad'] + '">' + value['nombre_modalidad'] + '</option>');
-//	});
-//
-//	$('#modalidad').on('change', function(event){
-//		event.preventDefault();
-//		event.stopImmediatePropagation();
-//		var tipo = $(this).val();
-//		mostrar_loader();
-//		$('#jsGrid').empty();
-//		if(tipo){
-//			select_area_enfoque(tipo);
-//			$('#area_enfoque').attr('disabled', false);
-//		}else{
-//			$('#area_enfoque').attr('disabled', true);
-//			$('#area_enfoque').empty();
-//			$('#area_enfoque').append('<option value="">Selecciona una opción</option>');
-//		}
-//		ocultar_loader();
-//	});
-//
-//}
-//
-//function select_area_enfoque(tipo) {
-//	area_enfoque(tipo);
-//	$('#area_enfoque').empty();
-//
-//	$('#area_enfoque').append('<option value="">Selecciona una opción</option>');
-//	$.each(opciones_area_enfoque, function (key, value) {
-//		$('#area_enfoque').append('<option value="' + value['id_area_enfoque'] + '">' + value['nombre_area_enfoque'] + '</option>');
-//	});
-//
-//	$('#area_enfoque').on('change', function(event){
-//		event.preventDefault();
-//		event.stopImmediatePropagation();
-//		var area = $(this).val();
-//		if(area){
-//			mostrar_loader();
-//			get_info_cursos(area);
-//			ocultar_loader();
-//		}
-//	});
-//
-//}
-//
-//function get_info_cursos(area){
-//	$.ajax({
-//		url: site_url + '/rama_organica/get_info_cursos/' + area ,
-//		type: 'POST',
-//		dataType: 'json',
-//	})
-//	.done(function(data) {
-//		lista_tipo_curso = data['tipos_curso'];
-//		lista_curso = data['cursos'];
-//		lista_rol = data['roles'];
-//		tipos_curso(area);
-//		grid_docente(area);
-//	})
-//	.fail(function (jqXHR, error, errorThrown) {
-//		console.log("error carga rama");
-//		console.log(jqXHR);
-//		console.log(error);
-//		console.log(errorThrown);
-//	});
-//}
 
+var dba;
 function grid_directorios(tipo_nivel) {
-    var curso_edit_value = null;
 
     var grid = $('#jsGridDirectorio').jsGrid({
         height: "400px",
@@ -182,11 +60,6 @@ function grid_directorios(tipo_nivel) {
                     dataType: "json"
                 })
                         .done(function (result) {
-/*                            d.resolve({
-                                data: result['data']
-                                itemsCount: result['length']
-
-                            });*/
                             d.resolve(result['data']);
                         });
 
